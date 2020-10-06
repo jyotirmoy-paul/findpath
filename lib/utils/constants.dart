@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-const kAppBarHeight = 50.0;
+const kAppBarHeight = 60.0;
 const kNodesDimen = 30.0;
 const kNodeMargin = 1.0;
 

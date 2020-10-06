@@ -1,5 +1,6 @@
+import 'package:findpath/screens/custom_app_bar.dart';
 import 'package:findpath/services/algorithm.dart';
-import 'package:findpath/services/generate_points.dart';
+import 'package:findpath/services/generate_nodes.dart';
 import 'package:findpath/models/node.dart';
 import 'package:findpath/utils/alert.dart';
 import 'package:findpath/utils/constants.dart';
@@ -24,34 +25,30 @@ class _MainScreenState extends State<MainScreen> {
   Node _startNode;
   Node _endNode;
 
-  _startAlgo() async {
-    // todo: after the algorithm starts, no modification in the playground would be possible
+  bool _showAnimation = true;
 
-    // todo: look out for empty start or end node
-
-    await Algorithm.run(
-      startNode: _startNode,
-      endNode: _endNode,
-      nodes: _nodes,
-    );
-  }
-
-  void _updateNodeType(NodeType nodeType, BuildContext ctx) {
-    if (_currentSelectedNodeType == nodeType) return;
-
-    _currentSelectedNodeType = nodeType;
-
-    switch (nodeType) {
-      case NodeType.BlockNode:
-        return Alert.showSnackBar(ctx, 'Block node selected');
-      case NodeType.StartNode:
-        return Alert.showSnackBar(ctx, 'Start node selected');
-      case NodeType.EndNode:
-        return Alert.showSnackBar(ctx, 'End node selected');
-      case NodeType.ClearNode:
-        return Alert.showSnackBar(ctx, 'Clear node selected');
+  _startAlgo(BuildContext ctx, Function setIsPlaying) async {
+    if (_startNode == null || _endNode == null) {
+      setIsPlaying(false);
+      return Alert.showSnackBar(ctx, 'You must select a start and end node');
     }
+
+    try {
+      await Algorithm.run(
+        startNode: _startNode,
+        endNode: _endNode,
+        nodes: _nodes,
+        showAnimation: _showAnimation,
+      );
+    } catch (e) {
+      print(e);
+    }
+
+    Alert.showSnackBar(ctx, 'Done');
   }
+
+  void _updateNodeType(NodeType nodeType) =>
+      _currentSelectedNodeType = nodeType;
 
   void _onNodeTap(int i, int j) {
     switch (_currentSelectedNodeType) {
@@ -85,10 +82,12 @@ class _MainScreenState extends State<MainScreen> {
   void _clearNodes(BuildContext ctx) {
     _nodes.clear();
     _nodes.addAll(GenerateNodes.generate(context));
+    _startNode = null;
+    _endNode = null;
 
     if (mounted) setState(() {});
 
-    Alert.showSnackBar(ctx, 'Cleared all Nodes');
+    Alert.showSnackBar(ctx, 'Reset');
   }
 
   @override
@@ -104,15 +103,11 @@ class _MainScreenState extends State<MainScreen> {
       backgroundColor: Colors.white,
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(kAppBarHeight),
-        child: Builder(
-          builder: (ctx) => AppBar(
-            backgroundColor: Colors.white,
-            elevation: 0.0,
-            centerTitle: true,
-            title: _buildTitleText(),
-            leading: _buildLeadingPlayIconButton(),
-            actions: _buildActions(ctx),
-          ),
+        child: CustomAppBar(
+          clearAll: _clearNodes,
+          algoStart: _startAlgo,
+          updateNodeType: _updateNodeType,
+          updateAnimationPref: (value) => _showAnimation = value,
         ),
       ),
       body: SafeArea(
@@ -152,63 +147,4 @@ class _MainScreenState extends State<MainScreen> {
       ),
     );
   }
-
-  List<Widget> _buildActions(BuildContext ctx) => [
-        IconButton(
-          icon: Icon(
-            Icons.highlight_off,
-            size: 30.0,
-            color: Colors.black,
-          ),
-          onPressed: () => _clearNodes(ctx),
-        ),
-        IconButton(
-          icon: Icon(
-            Icons.clear,
-            size: 30.0,
-            color: Colors.black,
-          ),
-          onPressed: () => _updateNodeType(NodeType.ClearNode, ctx),
-        ),
-        IconButton(
-          icon: Icon(
-            Icons.add_location,
-            size: 30.0,
-            color: Colors.black,
-          ),
-          onPressed: () => _updateNodeType(NodeType.StartNode, ctx),
-        ),
-        IconButton(
-          icon: Icon(
-            Icons.pin_drop,
-            size: 30.0,
-            color: Colors.black,
-          ),
-          onPressed: () => _updateNodeType(NodeType.EndNode, ctx),
-        ),
-        IconButton(
-          icon: Icon(
-            Icons.block,
-            size: 30.0,
-            color: Colors.black,
-          ),
-          onPressed: () => _updateNodeType(NodeType.BlockNode, ctx),
-        ),
-      ];
-
-  Widget _buildLeadingPlayIconButton() => IconButton(
-        icon: Icon(
-          Icons.play_arrow,
-          size: 30.0,
-          color: Colors.green,
-        ),
-        onPressed: _startAlgo,
-      );
-
-  Widget _buildTitleText() => const Text(
-        "Find Path",
-        style: const TextStyle(
-          color: Colors.black,
-        ),
-      );
 }

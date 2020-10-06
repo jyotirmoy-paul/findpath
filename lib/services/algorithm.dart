@@ -13,8 +13,15 @@ class Algorithm {
     if (nodeA.nodeColor == kBlockNodeColor ||
         nodeB.nodeColor == kBlockNodeColor)
       return double.infinity;
-    else
-      return 0.1;
+    else {
+      int x1 = nodeA.coord.x;
+      int y1 = nodeA.coord.y;
+
+      int x2 = nodeB.coord.x;
+      int y2 = nodeB.coord.y;
+
+      return 0.01 + math.pow(x1 - x2, 2) + math.pow(y1 - y2, 2);
+    }
   }
 
   static List<Node> getNeighbours(List<List<Node>> nodes, int x, int y) {
@@ -51,11 +58,12 @@ class Algorithm {
     queue[minIndex] = temp;
   }
 
-  static Future<void> drawPath(List<List<Node>> nodes, Node node) async {
+  static Future<void> drawPath(
+      List<List<Node>> nodes, Node node, bool showAnimation) async {
     while (node.parentCoord.x != null) {
       if (node.nodeColor != kStartNodeColor) node.setNodeColor(kPathColor);
 
-      await Algorithm.delay();
+      if (showAnimation) await Algorithm.delay();
       node = nodes[node.parentCoord.x][node.parentCoord.y];
     }
   }
@@ -64,6 +72,7 @@ class Algorithm {
     Node startNode,
     Node endNode,
     List<List<Node>> nodes,
+    bool showAnimation = true,
   }) async {
     assert(startNode != null);
     assert(endNode != null);
@@ -82,7 +91,7 @@ class Algorithm {
       u.processed = true;
       if (u.nodeColor != kStartNodeColor) u.setNodeColor(kProcessedNodeColor);
 
-      await Algorithm.delay();
+      if (showAnimation) await Algorithm.delay();
 
       List<Node> neighbours =
           Algorithm.getNeighbours(nodes, u.coord.x, u.coord.y);
@@ -91,7 +100,7 @@ class Algorithm {
         // check if v is our target node
         if (v.nodeColor == kEndNodeColor) {
           // make the path and return from this function
-          return Algorithm.drawPath(nodes, u);
+          return Algorithm.drawPath(nodes, u, showAnimation);
         }
 
         double dist = Algorithm.getDistance(u, v);
@@ -103,11 +112,7 @@ class Algorithm {
           v.distance = u.distance + dist;
           v.parentCoord = u.coord; // to keep track of the shortest path
         }
-
-        await Algorithm.delay();
       }
-
-      await Algorithm.delay();
     }
   }
 }
