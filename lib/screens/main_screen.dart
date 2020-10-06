@@ -1,4 +1,5 @@
-import 'package:findpath/engine/generate_points.dart';
+import 'package:findpath/services/algorithm.dart';
+import 'package:findpath/services/generate_points.dart';
 import 'package:findpath/models/node.dart';
 import 'package:findpath/utils/alert.dart';
 import 'package:findpath/utils/constants.dart';
@@ -23,7 +24,17 @@ class _MainScreenState extends State<MainScreen> {
   Node _startNode;
   Node _endNode;
 
-  _startAlgo() {}
+  _startAlgo() async {
+    // todo: after the algorithm starts, no modification in the playground would be possible
+
+    // todo: look out for empty start or end node
+
+    await Algorithm.run(
+      startNode: _startNode,
+      endNode: _endNode,
+      nodes: _nodes,
+    );
+  }
 
   void _updateNodeType(NodeType nodeType, BuildContext ctx) {
     if (_currentSelectedNodeType == nodeType) return;
@@ -90,6 +101,7 @@ class _MainScreenState extends State<MainScreen> {
     _nodes = GenerateNodes.generate(context);
 
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(kAppBarHeight),
         child: Builder(
@@ -107,7 +119,7 @@ class _MainScreenState extends State<MainScreen> {
         child: _nodes == null
             ? Center(
                 child: Text(
-                  'Too Small Dimensions',
+                  'Too small window size',
                   style: TextStyle(
                     color: Colors.black,
                     fontSize: 20.0,

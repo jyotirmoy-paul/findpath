@@ -6,7 +6,8 @@ class GenerateNodes {
   static List<List<Node>> generate(BuildContext context) {
     final size = MediaQuery.of(context).size;
 
-    if (size.height < 100.0 || size.width < 100.0) return null;
+    if (size.height < kMinRequiredWidthHeight ||
+        size.width < kMinRequiredWidthHeight) return null;
 
     final int n = (size.height - kAppBarHeight) ~/ kNodesDimen;
     final int m = size.width ~/ kNodesDimen;
