@@ -10,19 +10,29 @@ class Algorithm {
   static Future<void> delay() => Future.delayed(kAlgorithmAnimationDuration);
 
   static double getDistance(Node nodeA, Node nodeB) {
-    int x1 = nodeA.nodeColor.red;
-    int y1 = nodeA.nodeColor.green;
-    int z1 = nodeA.nodeColor.blue;
+//    int x1 = nodeA.nodeColor.red;
+//    int y1 = nodeA.nodeColor.green;
+//    int z1 = nodeA.nodeColor.blue;
+//
+//    int x2 = nodeB.nodeColor.red;
+//    int y2 = nodeB.nodeColor.green;
+//    int z2 = nodeB.nodeColor.blue;
+//
+//    // as Dijkstras algorithm works on non-zero distances, we need a min distance of 0.01
+//    double distance = 0.01 +
+//        math.pow(x1 - x2, 2) +
+//        math.pow(y1 - y2, 2) +
+//        math.pow(z1 - z2, 2);
+//
+//    log(distance.toString());
 
-    int x2 = nodeB.nodeColor.red;
-    int y2 = nodeB.nodeColor.green;
-    int z2 = nodeB.nodeColor.blue;
+    if (nodeA.nodeColor == kBlockNodeColor ||
+        nodeB.nodeColor == kBlockNodeColor)
+      return double.infinity;
+    else
+      return 0.1;
 
-    // as Dijkstras algorithm works on non-zero distances, we need a min distance of 0.01
-    return 0.01 +
-        math.pow(x1 - x2, 2) +
-        math.pow(y1 - y2, 2) +
-        math.pow(z1 - z2, 2);
+//    return distance;
   }
 
   static List<Node> getNeighbours(List<List<Node>> nodes, int x, int y) {
@@ -104,7 +114,8 @@ class Algorithm {
 
         double dist = Algorithm.getDistance(u, v);
 
-        v.setNodeColor(kNeighboursNodeColor);
+        if (v.nodeColor != kBlockNodeColor)
+          v.setNodeColor(kNeighboursNodeColor);
 
         if (u.distance + dist < v.distance) {
           v.distance = u.distance + dist;

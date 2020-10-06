@@ -20,6 +20,6 @@ const kStartNodeColor = Colors.green;
 const kEndNodeColor = Colors.red;
 
 const kProcessedNodeColor = Colors.amberAccent;
-const kNeighboursNodeColor = Colors.pinkAccent;
+const kNeighboursNodeColor = Colors.purple;
 
 const kPathColor = Colors.blue;
