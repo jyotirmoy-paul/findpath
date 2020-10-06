@@ -16,19 +16,21 @@ class NodeWidget extends StatefulWidget {
 }
 
 class NodeWidgetState extends State<NodeWidget> {
-  double factor = 1.0;
-  Color color = kDefaultNodeColor;
+  double _factor = 1.0;
+  Color _color = kDefaultNodeColor;
+
+  Color get color => _color;
 
   setNodeColor(Color newColor) async {
     setState(() {
-      factor = kIncreaseByFactor;
+      _factor = kIncreaseByFactor;
+      _color = newColor;
     });
 
     await Future.delayed(kAnimationDuration);
 
     setState(() {
-      factor = 1.0;
-      color = newColor;
+      _factor = 1.0;
     });
   }
 
@@ -37,10 +39,10 @@ class NodeWidgetState extends State<NodeWidget> {
     final dimen = (kNodesDimen - kNodeMargin * 2);
 
     return Transform.scale(
-      scale: factor,
+      scale: _factor,
       child: AnimatedContainer(
         duration: kAnimationDuration,
-        color: color,
+        color: _color,
         margin: EdgeInsets.all(kNodeMargin),
         height: dimen,
         width: dimen,

@@ -1,9 +1,15 @@
-import 'dart:developer';
-
 import 'package:findpath/engine/generate_points.dart';
 import 'package:findpath/models/node.dart';
+import 'package:findpath/utils/alert.dart';
 import 'package:findpath/utils/constants.dart';
 import 'package:flutter/material.dart';
+
+enum NodeType {
+  BlockNode,
+  StartNode,
+  EndNode,
+  ClearNode,
+}
 
 class MainScreen extends StatefulWidget {
   @override
@@ -12,29 +18,72 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   List<List<Node>> _nodes;
+  NodeType _currentSelectedNodeType = NodeType.BlockNode;
+
+  Node _startNode;
+  Node _endNode;
 
   _startAlgo() {}
 
-  // this method handles the node tap at index (i, j)
-  void _onNodeTap(int i, int j) {
-    log('($i, $j)');
+  void _updateNodeType(NodeType nodeType, BuildContext ctx) {
+    if (_currentSelectedNodeType == nodeType) return;
+
+    _currentSelectedNodeType = nodeType;
+
+    switch (nodeType) {
+      case NodeType.BlockNode:
+        return Alert.showSnackBar(ctx, 'Block node selected');
+      case NodeType.StartNode:
+        return Alert.showSnackBar(ctx, 'Start node selected');
+      case NodeType.EndNode:
+        return Alert.showSnackBar(ctx, 'End node selected');
+      case NodeType.ClearNode:
+        return Alert.showSnackBar(ctx, 'Clear node selected');
+    }
   }
 
-  Widget _buildLeadingPlayIconButton() => IconButton(
-        icon: Icon(
-          Icons.play_arrow,
-          size: 30.0,
-          color: Colors.green,
-        ),
-        onPressed: _startAlgo,
-      );
+  void _onNodeTap(int i, int j) {
+    switch (_currentSelectedNodeType) {
+      case NodeType.BlockNode:
+        if (_nodes[i][j].nodeColor != kDefaultNodeColor) return;
 
-  Widget _buildTitleText() => const Text(
-        "Find Path",
-        style: const TextStyle(
-          color: Colors.black,
-        ),
-      );
+        return _nodes[i][j].setNodeColor(kBlockNodeColor);
+
+      case NodeType.StartNode:
+        if (_nodes[i][j].nodeColor != kDefaultNodeColor) return;
+        if (_startNode != null) return;
+
+        _startNode = _nodes[i][j];
+        return _nodes[i][j].setNodeColor(kStartNodeColor);
+
+      case NodeType.EndNode:
+        if (_nodes[i][j].nodeColor != kDefaultNodeColor) return;
+        if (_endNode != null) return;
+
+        _endNode = _nodes[i][j];
+        return _nodes[i][j].setNodeColor(kEndNodeColor);
+
+      case NodeType.ClearNode:
+        if (_nodes[i][j].nodeColor == kStartNodeColor) _startNode = null;
+        if (_nodes[i][j].nodeColor == kEndNodeColor) _endNode = null;
+
+        return _nodes[i][j].setNodeColor(kDefaultNodeColor);
+    }
+  }
+
+  void _clearNodes(BuildContext ctx) {
+    _nodes.clear();
+    _nodes.addAll(GenerateNodes.generate(context));
+
+    if (mounted) setState(() {});
+
+    Alert.showSnackBar(ctx, 'Cleared all Nodes');
+  }
+
+  @override
+  void initState() {
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -43,12 +92,15 @@ class _MainScreenState extends State<MainScreen> {
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(kAppBarHeight),
-        child: AppBar(
-          backgroundColor: Colors.white,
-          elevation: 0.0,
-          centerTitle: true,
-          title: _buildTitleText(),
-          leading: _buildLeadingPlayIconButton(),
+        child: Builder(
+          builder: (ctx) => AppBar(
+            backgroundColor: Colors.white,
+            elevation: 0.0,
+            centerTitle: true,
+            title: _buildTitleText(),
+            leading: _buildLeadingPlayIconButton(),
+            actions: _buildActions(ctx),
+          ),
         ),
       ),
       body: SafeArea(
@@ -88,4 +140,63 @@ class _MainScreenState extends State<MainScreen> {
       ),
     );
   }
+
+  List<Widget> _buildActions(BuildContext ctx) => [
+        IconButton(
+          icon: Icon(
+            Icons.highlight_off,
+            size: 30.0,
+            color: Colors.black,
+          ),
+          onPressed: () => _clearNodes(ctx),
+        ),
+        IconButton(
+          icon: Icon(
+            Icons.clear,
+            size: 30.0,
+            color: Colors.black,
+          ),
+          onPressed: () => _updateNodeType(NodeType.ClearNode, ctx),
+        ),
+        IconButton(
+          icon: Icon(
+            Icons.add_location,
+            size: 30.0,
+            color: Colors.black,
+          ),
+          onPressed: () => _updateNodeType(NodeType.StartNode, ctx),
+        ),
+        IconButton(
+          icon: Icon(
+            Icons.pin_drop,
+            size: 30.0,
+            color: Colors.black,
+          ),
+          onPressed: () => _updateNodeType(NodeType.EndNode, ctx),
+        ),
+        IconButton(
+          icon: Icon(
+            Icons.block,
+            size: 30.0,
+            color: Colors.black,
+          ),
+          onPressed: () => _updateNodeType(NodeType.BlockNode, ctx),
+        ),
+      ];
+
+  Widget _buildLeadingPlayIconButton() => IconButton(
+        icon: Icon(
+          Icons.play_arrow,
+          size: 30.0,
+          color: Colors.green,
+        ),
+        onPressed: _startAlgo,
+      );
+
+  Widget _buildTitleText() => const Text(
+        "Find Path",
+        style: const TextStyle(
+          color: Colors.black,
+        ),
+      );
 }

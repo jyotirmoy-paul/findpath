@@ -1,6 +1,5 @@
 import 'package:findpath/models/node.dart';
 import 'package:findpath/utils/constants.dart';
-import 'package:findpath/widgets/node_widget.dart';
 import 'package:flutter/material.dart';
 
 class GenerateNodes {

@@ -1,5 +1,5 @@
 import 'package:findpath/widgets/node_widget.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 
 class Node {
   GlobalKey<NodeWidgetState> _key;
@@ -14,6 +14,7 @@ class Node {
     );
   }
 
-  set changeNodeColor(Color color) =>
-      this._key.currentState.setNodeColor(color);
+  void setNodeColor(Color color) => this._key.currentState.setNodeColor(color);
+
+  Color get nodeColor => this._key.currentState.color;
 }

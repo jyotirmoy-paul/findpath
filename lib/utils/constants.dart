@@ -13,5 +13,5 @@ const kAnimationDuration = const Duration(milliseconds: 80);
 const kDefaultNodeColor = const Color(0xffdcdcdc);
 const kBlockNodeColor = const Color(0xff111111);
 
-const kStartNodeColor = Colors.red;
-const kEndNodeColor = Colors.green;
+const kStartNodeColor = Colors.green;
+const kEndNodeColor = Colors.red;
