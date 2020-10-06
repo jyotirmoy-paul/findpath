@@ -10,8 +10,8 @@ const kIncreaseByFactor = 1.2;
 const kAnimationDuration = const Duration(milliseconds: 80);
 
 // colors
-const kGray = const Color(0xffdcdcdc);
-const kDarkGray = const Color(0xff111111);
+const kDefaultNodeColor = const Color(0xffdcdcdc);
+const kBlockNodeColor = const Color(0xff111111);
 
-const kRed = Colors.red;
-const kGreen = Colors.green;
+const kStartNodeColor = Colors.red;
+const kEndNodeColor = Colors.green;

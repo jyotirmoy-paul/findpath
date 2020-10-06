@@ -1,9 +1,10 @@
+import 'package:findpath/models/node.dart';
 import 'package:findpath/utils/constants.dart';
-import 'package:findpath/widgets/node.dart';
+import 'package:findpath/widgets/node_widget.dart';
 import 'package:flutter/material.dart';
 
 class GenerateNodes {
-  static List<List<Widget>> generate(BuildContext context) {
+  static List<List<Node>> generate(BuildContext context) {
     final size = MediaQuery.of(context).size;
 
     if (size.height < 100.0 || size.width < 100.0) return null;
@@ -11,12 +12,11 @@ class GenerateNodes {
     final int n = (size.height - kAppBarHeight) ~/ kNodesDimen;
     final int m = size.width ~/ kNodesDimen;
 
-    List<List<Widget>> cols = List<List<Widget>>();
+    List<List<Node>> cols = List<List<Node>>();
 
     for (int i = 0; i < n; i++) {
-      List<Widget> rows = List<Widget>();
-      for (int j = 0; j < m; j++) rows.add(Node(x: i, y: j));
-
+      List<Node> rows = List<Node>();
+      for (int j = 0; j < m; j++) rows.add(Node(i, j));
       cols.add(rows);
     }
 
