@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 const kAppBarHeight = 60.0;
-const kNodesDimen = 30.0;
+const kNodesDimen = 45.0;
 const kNodeMargin = 1.0;
 
 const kMinRequiredWidthHeight = 300.0;
@@ -10,7 +10,7 @@ const kIncreaseByFactor = 1.2;
 
 // animation constants
 const kAnimationDuration = const Duration(milliseconds: 80);
-const kAlgorithmAnimationDuration = const Duration(milliseconds: 10);
+const kAlgorithmAnimationDuration = const Duration(microseconds: 10);
 
 // colors
 const kDefaultNodeColor = const Color(0xffdcdcdc);
